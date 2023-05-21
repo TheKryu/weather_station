@@ -149,8 +149,7 @@ void loop()
   if (Serial.available() > 0)
   {
     readstr = Serial.readString();
-    //Serial.println(readstr);
-
+    
     if ( readstr.indexOf("get") >= 0 )
     {
       Serial.print("###");
@@ -199,10 +198,6 @@ void loop()
 
   if (cmillis - sens_millis >= SENS_UPDATE_INTERVAL)
   {
-    //Serial.println(cmillis);
-    //Serial.println(sens_millis);
-    //Serial.println(curSens);
-    
     curSens++;
     sensUpdate = true;
     sens_millis = cmillis;
@@ -211,34 +206,29 @@ void loop()
 
   if (curSens == 1 && sensUpdate)
   {
-    //Serial.println("1");
     sens1Temp = sht.getTemperature();
     sens1Hmdt = sht.getHumidity();
   }
 
   if (curSens == 2 && sensUpdate)
   {
-    //Serial.println("2");
     bmpPressure = bmp.readPressure() / 133.3;
     bmpTemp = bmp.readTemperature();
   }
 
   if (curSens == 3 && sensUpdate)
   {
-    //Serial.println("3");
     sens3Temp = readDS();
   }
 
   if (curSens == 4 && sensUpdate)
   {
-    //Serial.println("4");
     dhtTemp = dht.readTemperature();
     dhtHmdt = dht.readHumidity();
   }
   
   if (curSens == 5 && sensUpdate)
   {
-    //Serial.println("4");
     dht2Temp = dht2.readTemperature();
     dht2Hmdt = dht2.readHumidity();
   }
@@ -247,7 +237,6 @@ void loop()
 
   if (cmillis - scr_millis > DISPLAY_UPDATE_INTERVAL)
   {
-    //Serial.println(cmillis);
     scr_millis = cmillis;
     next_screen++;
 
@@ -353,44 +342,41 @@ void loop()
 
 float readDS()
 {
-// Определяем температуру от датчика DS18b20
-  byte data[2]; // Место для значения температуры
+  byte data[2];
   
-  ds.reset(); // Начинаем взаимодействие со сброса всех предыдущих команд и параметров
-  ds.write(0xCC); // Даем датчику DS18b20 команду пропустить поиск по адресу. В нашем случае только одно устрйоство 
-  ds.write(0x44); // Даем датчику DS18b20 команду измерить температуру. Само значение температуры мы еще не получаем - датчик его положит во внутреннюю память
+  ds.reset();
+  ds.write(0xCC);
+  ds.write(0x44);
   
-  delay(1000); // Микросхема измеряет температуру, а мы ждем.  
+  delay(1000);
   
-  ds.reset(); // Теперь готовимся получить значение измеренной температуры
+  ds.reset(); 
   ds.write(0xCC); 
-  ds.write(0xBE); // Просим передать нам значение регистров со значением температуры
+  ds.write(0xBE);
 
-  // Получаем и считываем ответ
-  data[0] = ds.read(); // Читаем младший байт значения температуры
-  data[1] = ds.read(); // А теперь старший
+  data[0] = ds.read();
+  data[1] = ds.read();
 
-  // Формируем итоговое значение: 
-  //    - сперва "склеиваем" значение, 
-  //    - затем умножаем его на коэффициент, соответсвующий разрешающей способности (для 12 бит по умолчанию - это 0,0625)
   float temperature =  ((data[1] << 8) | data[0]) * 0.0625;
-  
-  // Выводим полученное значение температуры в монитор порта
-  //Serial.println(temperature);
-
+    
   return temperature;
 }
+
+// ------------------------------
 
 void ledOn()
 {
   digitalWrite(LED_PIN, HIGH);
 }
 
+// ------------------------------
+
 void ledOff()
 {
   digitalWrite(LED_PIN, LOW);
 }
 
+// ------------------------------
 // blink 1 sec
 
 void blink1s()
@@ -400,6 +386,7 @@ void blink1s()
   digitalWrite(LED_PIN, LOW);
 }
 
+// ------------------------------
 // turn led on t millisec
 
 void blinkT(int t)
@@ -413,6 +400,7 @@ void blinkT(int t)
   digitalWrite(LED_PIN, LOW);
 }  
 
+// ------------------------------
 // blink X times
 
 void blinkX(int x)
@@ -425,6 +413,8 @@ void blinkX(int x)
     delay(100);
   }
 }
+
+// ------------------------------
 
 void blinkXT(int x, int t)
 {
